@@ -12,32 +12,33 @@ scores.each do |s|
   end
 end
 
-frames = []
-shots.each_slice(2) do |s|
-  frames << s
-end
+frames = shots.each_slice(2).map(&:itself)
 
-point = 0
-frames.each_with_index do |frame, index|
-  point += if frame[0] == 10 # strike
-             if index < 9
-               if frames[index + 1][0] == 10
-                 20 + frames[index + 2][0]
-               else
-                 10 + frames[index + 1].sum
-               end
-             else
-               frame.sum
-             end
-           elsif frame.sum == 10 # spare
-             if index < 9
-               10 + frames[index + 1][0]
-             else
-               frame.sum
-             end
-           else
-             frame.sum
-           end
+point = frames.each_with_index.sum do |frame, index|
+  strike = frame[0] == 10
+  spare = !strike && frame.sum == 10
+  next_frame = frames[index + 1]
+  next_next_frame = frames[index + 2]
+
+  point = if strike
+            if index < 9
+              if next_frame[0] == 10
+                20 + next_next_frame[0]
+              else
+                10 + next_frame.sum
+              end
+            else
+              frame.sum
+            end
+          elsif spare
+            if index < 9
+              10 + next_frame[0]
+            else
+              frame.sum
+            end
+          else
+            frame.sum
+          end
 end
 
 puts point
