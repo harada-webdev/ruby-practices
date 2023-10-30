@@ -19,7 +19,6 @@ def ls_vertical_order(rows = 4, cols = 3)
 end
 
 ls_board = ls_vertical_order
-
 ls_board.each do |document|
-  puts document.map { |d| d.to_s.ljust(15) }.join
+  puts document.map { |d| d.to_s.ljust(30) }.join
 end
