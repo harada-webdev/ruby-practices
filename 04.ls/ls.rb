@@ -1,24 +1,23 @@
 # frozen_string_literal: true
 
-def ruby_ls_maker
-  Dir.entries('.')
-     .reject { |entry| entry.start_with?('.') }
+def fetch_file
+  Dir.glob('[^.]*')
      .sort
 end
 
-def ls_vertical_order(rows = 4, cols = 3)
-  ls_elements = ruby_ls_maker
+def order_vertically(rows = 4, cols = 3)
+  entries = fetch_file
   board = Array.new(rows) { Array.new(cols) }
 
-  ls_elements.each_with_index do |element, index|
+  entries.each_with_index do |entry, index|
     col, row = index.divmod(rows)
-    board[row][col] = element
+    board[row][col] = entry
   end
 
   board
 end
 
-ls_board = ls_vertical_order
-ls_board.each do |document|
-  puts document.map { |d| d.to_s.ljust(30) }.join
+file_list_board = order_vertically
+file_list_board.each do |file_row|
+  puts file_row.map { |file_col| file_col.to_s.ljust(30) }.join
 end
