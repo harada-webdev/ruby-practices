@@ -3,7 +3,7 @@
 show_hidden = ARGV.include?('-a')
 
 def fetch_file(show_hidden: false)
-  (show_hidden ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')).sort
+  Dir.glob(show_hidden ? '{*,.*}' : '*').sort
 end
 
 def order_vertically(rows = 4, cols = 3, show_hidden: false)
