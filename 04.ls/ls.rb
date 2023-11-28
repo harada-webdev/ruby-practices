@@ -22,6 +22,3 @@ formatted_file_table = order_vertically(show_hidden:)
 formatted_file_table.each do |file_row|
   puts file_row.map { |file_col| file_col.to_s.ljust(30) }.join
 end
-
-
-Dir.glob(show_hidden ? '{*,.*}' : '*').sort
