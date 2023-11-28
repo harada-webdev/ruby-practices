@@ -4,7 +4,7 @@ show_reversed = ARGV.include?('-r')
 
 def fetch_file(show_reversed: false)
   sorted_files = Dir.glob('*').sort
-  sorted_files = show_reversed ? sorted_files.reverse : sorted_files
+  show_reversed ? sorted_files.reverse : sorted_files
 end
 
 def order_vertically(rows = 4, cols = 3, show_reversed: false)
