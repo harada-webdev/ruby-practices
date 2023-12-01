@@ -2,22 +2,17 @@
 
 require 'etc'
 
-def exposit_file
-  sorted_files = Dir.glob('*').sort_by(&:downcase)
-  puts "total #{calculate_total_block_size(sorted_files)}"
-  display_file_mode(sorted_files)
+def exposit_files(files)
+  puts "total #{calculate_total_block_size(files)}"
+  display_file_mode(files)
 end
 
 def calculate_total_block_size(files)
-  total_block_size = 0
-
-  files.each do |file|
+  files.sum do |file|
     file_stat = File::Stat.new(file)
     required_block_number = (file_stat.size / file_stat.blksize.to_f).ceil
-    total_block_size += ((required_block_number * file_stat.blksize) / 1024.0).ceil
+    required_block_number * file_stat.blksize / 1024.0.ceil
   end
-
-  total_block_size
 end
 
 def display_file_mode(files)
@@ -45,11 +40,10 @@ def display_file_detail(file, file_stat, file_mode)
      "#{file}"
 end
 
-def order_vertically(rows = 4, cols = 3)
-  sorted_files = Dir.glob('*').sort
+def order_vertically(files, rows = 4, cols = 3)
   file_table = Array.new(rows) { Array.new(cols) }
 
-  sorted_files.each_with_index do |entry, index|
+  files.each_with_index do |entry, index|
     col, row = index.divmod(rows)
     file_table[row][col] = entry
   end
@@ -57,11 +51,13 @@ def order_vertically(rows = 4, cols = 3)
   file_table
 end
 
+sorted_files = Dir.glob('*').sort
 show_detail = ARGV.include?('-l')
+
 if show_detail
-  exposit_file
+  exposit_files(sorted_files)
 else
-  formatted_file_table = order_vertically
+  formatted_file_table = order_vertically(sorted_files)
   formatted_file_table.each do |file_row|
     puts file_row.map { |file_col| file_col.to_s.ljust(30) }.join
   end
