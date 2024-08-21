@@ -3,10 +3,10 @@
 def main
   sum = { first: 0, second: 0, third: 0 }
   selected_options = ''
-  parser_option(sum, selected_options)
+  parse_command_line_arguments(sum, selected_options)
 end
 
-def parser_option(sum, selected_options)
+def parse_command_line_arguments(sum, selected_options)
   if ARGV[0]&.match?(/-/)
     selected_options = ARGV[0]
     files = ARGV[1..]
@@ -15,10 +15,10 @@ def parser_option(sum, selected_options)
   else
     files = []
   end
-  judge_stdin(files, sum, selected_options)
+  judge_whether_stdin_or_not(files, sum, selected_options)
 end
 
-def judge_stdin(files, sum, selected_options)
+def judge_whether_stdin_or_not(files, sum, selected_options)
   stdin_data = $stdin.read if files.empty?
   if stdin_data
     put_counted_data_in_array(stdin_data, selected_options, sum, nil)
@@ -36,14 +36,14 @@ def put_counted_data_in_array(data, selected_options, sum, file)
 
   array = []
   option_hash = { /l/ => counts[:lines], /w/ => counts[:words], /c/ => counts[:bytes] }
-  option_hash.each do |option, counted_data|
-    array << counted_data if selected_options.match?(option)
+  option_hash.each do |option, counted_data_by_option|
+    array << counted_data_by_option if selected_options.match?(option)
   end
 
-  select_display_data(selected_options, array, counts, file, sum)
+  judge_whether_option_or_not(selected_options, array, counts, file, sum)
 end
 
-def select_display_data(selected_options, array, counts, file, sum)
+def judge_whether_option_or_not(selected_options, array, counts, file, sum)
   if selected_options.empty?
     display_no_option_format(counts, file)
     update_sum_from_counts(sum, counts)
