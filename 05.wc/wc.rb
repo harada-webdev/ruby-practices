@@ -1,95 +1,87 @@
 # frozen_string_literal: true
 
+require 'optparse'
+
 def main
-  sum = { first: 0, second: 0, third: 0 }
-  selected_options = ''
-  parse_command_line_arguments(sum, selected_options)
+  totals = { first: 0, second: 0, third: 0 }
+  files, options = parse_command_line_arguments
+
+  files.each do |file|
+    all_counted_data, counted_data = generate_counted_data(file, options)
+    display_each_data(all_counted_data, counted_data, file, options)
+    update_totals(all_counted_data, counted_data, options, totals)
+  end
+
+  display_totals(options, totals) if files.count > 1
 end
 
-def parse_command_line_arguments(sum, selected_options)
-  if ARGV[0]&.match?(/-/)
-    selected_options = ARGV[0]
-    files = ARGV[1..]
-  elsif ARGV[0]
-    files = ARGV
+def parse_command_line_arguments
+  options = ''
+
+  OptionParser.new do |opts|
+    opts.on('-l') { options += 'l' }
+    opts.on('-w') { options += 'w' }
+    opts.on('-c') { options += 'c' }
+
+    opts.parse!(ARGV)
+  end
+
+  files = ARGV.empty? ? [$stdin] : ARGV
+
+  [files, options]
+end
+
+def generate_counted_data(file, options)
+  file_content = file == $stdin ? $stdin.read : File.read(file)
+  all_counted_data = {
+    'l' => file_content.split("\n").size,
+    'w' => file_content.split.size,
+    'c' => file_content.size
+  }
+  counted_data = []
+
+  all_counted_data.each do |option, data|
+    counted_data << data if options.include?(option)
+  end
+
+  [all_counted_data, counted_data]
+end
+
+def display_each_data(all_counted_data, counted_data, file, options)
+  if options.empty?
+    puts "#{all_counted_data['l'].to_s.rjust(5)} " \
+         "#{all_counted_data['w'].to_s.rjust(5)} " \
+         "#{all_counted_data['c'].to_s.rjust(5)} " \
+         "#{file if file != $stdin}"
   else
-    files = []
+    puts "#{counted_data.map(&:to_s).map { |data| data.rjust(5) }.join(' ')} " \
+         "#{file if file != $stdin}"
   end
-  judge_whether_stdin_or_not(files, sum, selected_options)
 end
 
-def judge_whether_stdin_or_not(files, sum, selected_options)
-  stdin_data = $stdin.read if files.empty?
-  if stdin_data
-    put_counted_data_in_array(stdin_data, selected_options, sum, nil)
+def update_totals(all_counted_data, counted_data, options, totals)
+  if options.empty?
+    totals[:first] += all_counted_data['l']
+    totals[:second] += all_counted_data['w']
+    totals[:third] += all_counted_data['c']
   else
-    files.each do |file|
-      content = File.read(file)
-      put_counted_data_in_array(content, selected_options, sum, file)
-    end
-    display_total_data(sum) if files && files.count > 1
+    totals[:first] += counted_data[0]
+    totals[:second] += counted_data[1] || 0
+    totals[:third] += counted_data[2] || 0
   end
 end
 
-def put_counted_data_in_array(data, selected_options, sum, file)
-  counts = { words: data.split.size, lines: data.split("\n").size, bytes: data.size }
+def display_totals(options, totals)
+  extracted_totals = []
 
-  array = []
-  option_hash = { /l/ => counts[:lines], /w/ => counts[:words], /c/ => counts[:bytes] }
-  option_hash.each do |option, counted_data_by_option|
-    array << counted_data_by_option if selected_options.match?(option)
+  totals.each_with_index do |(_order, total), index|
+    break if !options.empty? && options.length <= index
+
+    extracted_totals << total
   end
 
-  judge_whether_option_or_not(selected_options, array, counts, file, sum)
-end
-
-def judge_whether_option_or_not(selected_options, array, counts, file, sum)
-  if selected_options.empty?
-    display_no_option_format(counts, file)
-    update_sum_from_counts(sum, counts)
-  else
-    display_format_with_options(array, file)
-    update_sum_from_array(sum, array)
-  end
-end
-
-def display_no_option_format(counts, file)
-  puts "#{counts[:lines].to_s.rjust(5)} " \
-       "#{counts[:words].to_s.rjust(5)} " \
-       "#{counts[:bytes].to_s.rjust(5)} " \
-       "#{file}"
-end
-
-def update_sum_from_counts(sum, counts)
-  sum.update(
-    first: sum[:first] + counts[:lines],
-    second: sum[:second] + counts[:words],
-    third: sum[:third] + counts[:bytes]
-  )
-end
-
-def display_format_with_options(array, file)
-  puts "#{array.map(&:to_s).map { |s| s.rjust(5) }.join(' ')} " \
-       "#{file}"
-end
-
-def update_sum_from_array(sum, array)
-  sum.update(
-    first: sum[:first] + array[0].to_i,
-    second: sum[:second] + array[1].to_i,
-    third: sum[:third] + array[2].to_i
-  )
-end
-
-def display_total_data(sum)
-  sum_data_array = []
-  sum.each_with_index do |(_key, value), index|
-    break if ARGV[0].match?(/-/) && ARGV[0].chars.count - 1 <= index
-
-    sum_data_array << value
-  end
-  puts "#{sum_data_array.map(&:to_s).map { |s| s.rjust(5) }.join(' ')} " \
-       'total'
+  puts "#{extracted_totals.map(&:to_s).map { |total| total.rjust(5) }.join(' ')} " \
+       'totals'
 end
 
 main
