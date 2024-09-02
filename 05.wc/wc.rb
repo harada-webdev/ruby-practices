@@ -3,13 +3,13 @@
 require 'optparse'
 
 def main
-  totals = { first: 0, second: 0, third: 0 }
+  totals = { lines: 0, words: 0, chars: 0 }
   files, options = parse_command_line_arguments
 
   files.each do |file|
-    all_counted_data, counted_data = generate_counted_data(file, options)
-    display_each_data(all_counted_data, counted_data, file, options)
-    update_totals(all_counted_data, counted_data, options, totals)
+    all_counts, counts = generate_counts(file, options)
+    display_counts(all_counts, counts, file, options)
+    update_totals(all_counts, counts, options, totals)
   end
 
   display_totals(options, totals) if files.count > 1
@@ -31,43 +31,43 @@ def parse_command_line_arguments
   [files, options]
 end
 
-def generate_counted_data(file, options)
+def generate_counts(file, options)
   file_content = file == $stdin ? $stdin.read : File.read(file)
-  all_counted_data = {
+  all_counts = {
     'l' => file_content.split("\n").size,
     'w' => file_content.split.size,
     'c' => file_content.size
   }
-  counted_data = []
+  counts = []
 
-  all_counted_data.each do |option, data|
-    counted_data << data if options.include?(option)
+  all_counts.each do |option, data|
+    counts << data if options.include?(option)
   end
 
-  [all_counted_data, counted_data]
+  [all_counts, counts]
 end
 
-def display_each_data(all_counted_data, counted_data, file, options)
+def display_counts(all_counts, counts, file, options)
   if options.empty?
-    puts "#{all_counted_data['l'].to_s.rjust(5)} " \
-         "#{all_counted_data['w'].to_s.rjust(5)} " \
-         "#{all_counted_data['c'].to_s.rjust(5)} " \
+    puts "#{all_counts['l'].to_s.rjust(5)} " \
+         "#{all_counts['w'].to_s.rjust(5)} " \
+         "#{all_counts['c'].to_s.rjust(5)} " \
          "#{file if file != $stdin}"
   else
-    puts "#{counted_data.map(&:to_s).map { |data| data.rjust(5) }.join(' ')} " \
+    puts "#{counts.map(&:to_s).map { |count| count.rjust(5) }.join(' ')} " \
          "#{file if file != $stdin}"
   end
 end
 
-def update_totals(all_counted_data, counted_data, options, totals)
+def update_totals(all_counts, counts, options, totals)
   if options.empty?
-    totals[:first] += all_counted_data['l']
-    totals[:second] += all_counted_data['w']
-    totals[:third] += all_counted_data['c']
+    totals[:lines] += all_counts['l']
+    totals[:words] += all_counts['w']
+    totals[:chars] += all_counts['c']
   else
-    totals[:first] += counted_data[0]
-    totals[:second] += counted_data[1] || 0
-    totals[:third] += counted_data[2] || 0
+    totals[:lines] += counts[0]
+    totals[:words] += counts[1] || 0
+    totals[:chars] += counts[2] || 0
   end
 end
 
