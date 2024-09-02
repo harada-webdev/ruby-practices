@@ -10,9 +10,9 @@ def main
     file = file_info[:file]
     file_name = file_info[:file_name]
 
-    all_counts, counts = generate_counts(file, options)
-    display_counts(all_counts, counts, file_name, options)
-    update_totals(all_counts, counts, options, totals)
+    counts = generate_counts(file)
+    display_counts(counts, file_name, options)
+    update_totals(counts, options, totals)
 
     file.close unless file_name.nil?
   end
@@ -42,43 +42,38 @@ def parse_command_line_arguments
   [files, options]
 end
 
-def generate_counts(file, options)
+def generate_counts(file)
   file_content = file.read
-  all_counts = {
+  {
     'l' => file_content.split("\n").size,
     'w' => file_content.split.size,
     'c' => file_content.size
   }
-  counts = []
-
-  all_counts.each do |option, data|
-    counts << data if options.include?(option)
-  end
-
-  [all_counts, counts]
 end
 
-def display_counts(all_counts, counts, file_name, options)
+def display_counts(counts, file_name, options)
   if options.empty?
-    puts "#{all_counts['l'].to_s.rjust(5)} " \
-         "#{all_counts['w'].to_s.rjust(5)} " \
-         "#{all_counts['c'].to_s.rjust(5)} " \
+    puts "#{counts['l'].to_s.rjust(5)} " \
+         "#{counts['w'].to_s.rjust(5)} " \
+         "#{counts['c'].to_s.rjust(5)} " \
          "#{file_name unless file_name.nil?}"
   else
-    puts "#{counts.map(&:to_s).map { |count| count.rjust(5) }.join(' ')} " \
+    puts "#{counts['l'].to_s.rjust(5) if options.include?('l')} " \
+         "#{counts['w'].to_s.rjust(5) if options.include?('w')} " \
+         "#{counts['c'].to_s.rjust(5) if options.include?('c')} " \
          "#{file_name unless file_name.nil?}"
   end
 end
 
-def update_totals(all_counts, counts, options, totals)
+def update_totals(counts, options, totals)
   if options.empty?
-    totals[:lines] += all_counts['l']
-    totals[:words] += all_counts['w']
-    totals[:chars] += all_counts['c']
+    totals[:lines] += counts['l']
+    totals[:words] += counts['w']
+    totals[:chars] += counts['c']
   else
-    totals[:lines] += counts[0]
-    totals[:words] += counts[1] || 0
-    totals[:chars] += counts[2] || 0
+    totals[:lines] += counts['l'] if options.include?('l')
+    totals[:words] += counts['w'] if options.include?('w')
+    totals[:chars] += counts['c'] if options.include?('c')
   end
 end
 
