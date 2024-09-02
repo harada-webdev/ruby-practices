@@ -21,12 +21,12 @@ def main
 end
 
 def parse_command_line_arguments
-  options = ''
+  options = {}
 
   OptionParser.new do |opts|
-    opts.on('-l') { options += 'l' }
-    opts.on('-w') { options += 'w' }
-    opts.on('-c') { options += 'c' }
+    opts.on('-l') { options[:l] = true }
+    opts.on('-w') { options[:w] = true }
+    opts.on('-c') { options[:c] = true }
 
     opts.parse!(ARGV)
   end
@@ -58,9 +58,9 @@ def display_counts(counts, file_name, options)
          "#{counts['c'].to_s.rjust(5)} " \
          "#{file_name unless file_name.nil?}"
   else
-    puts "#{counts['l'].to_s.rjust(5) if options.include?('l')} " \
-         "#{counts['w'].to_s.rjust(5) if options.include?('w')} " \
-         "#{counts['c'].to_s.rjust(5) if options.include?('c')} " \
+    puts "#{counts['l'].to_s.rjust(5) if options[:l]} " \
+         "#{counts['w'].to_s.rjust(5) if options[:w]} " \
+         "#{counts['c'].to_s.rjust(5) if options[:c]} " \
          "#{file_name unless file_name.nil?}"
   end
 end
@@ -71,9 +71,9 @@ def update_totals(counts, options, totals)
     totals[:words] += counts['w']
     totals[:chars] += counts['c']
   else
-    totals[:lines] += counts['l'] if options.include?('l')
-    totals[:words] += counts['w'] if options.include?('w')
-    totals[:chars] += counts['c'] if options.include?('c')
+    totals[:lines] += counts['l'] if options[:l]
+    totals[:words] += counts['w'] if options[:w]
+    totals[:chars] += counts['c'] if options[:c]
   end
 end
 
