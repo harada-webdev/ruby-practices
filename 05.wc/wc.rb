@@ -6,10 +6,15 @@ def main
   totals = { lines: 0, words: 0, chars: 0 }
   files, options = parse_command_line_arguments
 
-  files.each do |file|
+  files.each do |file_info|
+    file = file_info[:file]
+    file_name = file_info[:file_name]
+
     all_counts, counts = generate_counts(file, options)
-    display_counts(all_counts, counts, file, options)
+    display_counts(all_counts, counts, file_name, options)
     update_totals(all_counts, counts, options, totals)
+
+    file.close unless file_name.nil?
   end
 
   display_totals(options, totals) if files.count > 1
@@ -26,13 +31,19 @@ def parse_command_line_arguments
     opts.parse!(ARGV)
   end
 
-  files = ARGV.empty? ? [$stdin] : ARGV
+  files = if ARGV.empty?
+            [{ file_name: nil, file: $stdin }]
+          else
+            ARGV.map do |f|
+              { file_name: f, file: File.open(f) }
+            end
+          end
 
   [files, options]
 end
 
 def generate_counts(file, options)
-  file_content = file == $stdin ? $stdin.read : File.read(file)
+  file_content = file.read
   all_counts = {
     'l' => file_content.split("\n").size,
     'w' => file_content.split.size,
@@ -47,15 +58,15 @@ def generate_counts(file, options)
   [all_counts, counts]
 end
 
-def display_counts(all_counts, counts, file, options)
+def display_counts(all_counts, counts, file_name, options)
   if options.empty?
     puts "#{all_counts['l'].to_s.rjust(5)} " \
          "#{all_counts['w'].to_s.rjust(5)} " \
          "#{all_counts['c'].to_s.rjust(5)} " \
-         "#{file if file != $stdin}"
+         "#{file_name unless file_name.nil?}"
   else
     puts "#{counts.map(&:to_s).map { |count| count.rjust(5) }.join(' ')} " \
-         "#{file if file != $stdin}"
+         "#{file_name unless file_name.nil?}"
   end
 end
 
