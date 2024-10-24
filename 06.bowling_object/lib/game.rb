@@ -4,28 +4,29 @@ require_relative 'frame'
 
 class Game
   def initialize(marks)
-    @marks = marks
+    @frames = create_frames(marks)
   end
 
-  def create_frames
+  private
+
+  def create_frames(marks)
     frame = []
     frames = []
-    @marks.each do |mark|
+    marks.each do |mark|
       frame << mark
-      if frames.size < 10 && (frame.size >= 2 || mark == 'X')
-        frames << frame.clone
+      if frames.size < 9 && (frame.size >= 2 || mark == 'X')
+        frames << Frame.new(frame)
         frame.clear
       end
     end
-    frames.last.concat(frame)
-    frames
+    frames << Frame.new(frame)
   end
 
-  def calculate_score(frames)
-    @frames = frames
+  public
+
+  def calculate_score
     score = 0
-    10.times do |index|
-      frame = Frame.new(@frames[index])
+    @frames.each_with_index do |frame, index|
       score += frame.score == 10 && index < 9 ? calculate_bonus_score(frame, index) : frame.score
     end
     score
@@ -34,9 +35,9 @@ class Game
   private
 
   def calculate_bonus_score(frame, index)
-    next_first_mark = Mark.new(@frames[index + 1][0]).score
-    next_second_mark = Mark.new(@frames[index + 1][1]).score
-    after_next_first_mark = Mark.new(@frames[index + 2][0]).score if index < 8
+    next_first_mark = @frames[index + 1].first_mark.score
+    next_second_mark = @frames[index + 1].second_mark.score
+    after_next_first_mark = @frames[index + 2].first_mark.score if index < 8
 
     if frame.first_mark.score == 10
       if next_first_mark == 10 && index < 8

@@ -3,7 +3,7 @@
 require_relative 'mark'
 
 class Frame
-  attr_reader :first_mark
+  attr_reader :first_mark, :second_mark
 
   def initialize(frame)
     @first_mark = Mark.new(frame[0])

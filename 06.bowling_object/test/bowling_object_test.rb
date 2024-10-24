@@ -21,48 +21,43 @@ class BowlingObjectTest < Minitest::Test
     assert_equal 10, frame.score
   end
 
-  def test_create_frames
-    game = Game.new(%w[6 3 9 0 0 3 8 2 7 3 X 9 1 8 0 X 6 4 5])
-    assert_equal [%w[6 3], %w[9 0], %w[0 3], %w[8 2], %w[7 3], ['X'], %w[9 1], %w[8 0], ['X'], %w[6 4 5]], game.create_frames
-  end
-
   def test_calculate_score1
     game = Game.new(%w[6 3 9 0 0 3 8 2 7 3 X 9 1 8 0 X 6 4 5])
-    assert_equal 139, game.calculate_score(game.create_frames)
+    assert_equal 139, game.calculate_score
   end
 
   def test_calculate_score2
     game = Game.new(%w[6 3 9 0 0 3 8 2 7 3 X 9 1 8 0 X X X X])
-    assert_equal 164, game.calculate_score(game.create_frames)
+    assert_equal 164, game.calculate_score
   end
 
   def test_calculate_score3
     game = Game.new(%w[0 10 1 5 0 0 0 0 X X X 5 1 8 1 0 4])
-    assert_equal 107, game.calculate_score(game.create_frames)
+    assert_equal 107, game.calculate_score
   end
 
   def test_calculate_score4
     game = Game.new(%w[6 3 9 0 0 3 8 2 7 3 X 9 1 8 0 X X 0 0])
-    assert_equal 134, game.calculate_score(game.create_frames)
+    assert_equal 134, game.calculate_score
   end
 
   def test_calculate_score5
     game = Game.new(%w[6 3 9 0 0 3 8 2 7 3 X 9 1 8 0 X X 1 8])
-    assert_equal 144, game.calculate_score(game.create_frames)
+    assert_equal 144, game.calculate_score
   end
 
   def test_calculate_score6
     game = Game.new(%w[X X X X X X X X X X X X])
-    assert_equal 300, game.calculate_score(game.create_frames)
+    assert_equal 300, game.calculate_score
   end
 
   def test_calculate_score7
     game = Game.new(%w[X X X X X X X X X X X 2])
-    assert_equal 292, game.calculate_score(game.create_frames)
+    assert_equal 292, game.calculate_score
   end
 
   def test_calculate_score8
     game = Game.new(%w[X 0 0 X 0 0 X 0 0 X 0 0 X 0 0])
-    assert_equal 50, game.calculate_score(game.create_frames)
+    assert_equal 50, game.calculate_score
   end
 end
