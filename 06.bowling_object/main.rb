@@ -2,6 +2,6 @@
 
 require_relative 'lib/game'
 
-marks = ARGV[0].split(',')
-game = Game.new(marks)
+records = ARGV[0].split(',')
+game = Game.new(records)
 puts game.calculate_score

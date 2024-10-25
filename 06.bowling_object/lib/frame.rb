@@ -5,10 +5,10 @@ require_relative 'mark'
 class Frame
   attr_reader :first_mark, :second_mark
 
-  def initialize(frame)
-    frame[1] ||= 0
-    frame[2] ||= 0
-    @first_mark, @second_mark, @third_mark = frame.map { Mark.new(_1) }
+  def initialize(marks)
+    marks[1] ||= 0
+    marks[2] ||= 0
+    @first_mark, @second_mark, @third_mark = marks.map { Mark.new(_1) }
   end
 
   def score(frames, index)

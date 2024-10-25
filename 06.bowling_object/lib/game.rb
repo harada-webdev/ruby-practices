@@ -3,23 +3,23 @@
 require_relative 'frame'
 
 class Game
-  def initialize(marks)
-    @frames = create_frames(marks)
+  def initialize(records)
+    @frames = create_frames(records)
   end
 
   private
 
-  def create_frames(marks)
-    frame = []
+  def create_frames(records)
+    marks = []
     frames = []
-    marks.each do |mark|
-      frame << mark
-      if frames.size < 9 && (frame.size >= 2 || mark == 'X')
-        frames << Frame.new(frame)
-        frame.clear
+    records.each do |record|
+      marks << record
+      if frames.size < 9 && (marks.size >= 2 || record == 'X')
+        frames << Frame.new(marks)
+        marks.clear
       end
     end
-    frames << Frame.new(frame)
+    frames << Frame.new(marks)
   end
 
   public
