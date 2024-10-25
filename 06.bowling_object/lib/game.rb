@@ -27,10 +27,7 @@ class Game
   def calculate_score
     @frames.each_with_index.sum do |frame, index|
       if frame.score == 10 && index < 9
-        next_first_mark = @frames[index + 1].first_mark.score
-        next_second_mark = @frames[index + 1].second_mark.score
-        after_next_first_mark = @frames[index + 2].first_mark.score if index < 8
-        frame.bonus_score(frame, next_first_mark, next_second_mark, after_next_first_mark)
+        frame.bonus_score(@frames, frame, index)
       else
         frame.score
       end
