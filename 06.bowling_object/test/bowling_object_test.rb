@@ -16,11 +16,6 @@ class BowlingObjectTest < Minitest::Test
     assert_equal 0, mark.score
   end
 
-  def test_frame_score
-    frame = Frame.new(%w[0 10])
-    assert_equal 10, frame.score
-  end
-
   def test_calculate_score1
     game = Game.new(%w[6 3 9 0 0 3 8 2 7 3 X 9 1 8 0 X 6 4 5])
     assert_equal 139, game.calculate_score

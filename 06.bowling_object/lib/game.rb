@@ -25,12 +25,6 @@ class Game
   public
 
   def calculate_score
-    @frames.each_with_index.sum do |frame, index|
-      if frame.score == 10 && index < 9
-        frame.bonus_score(@frames, frame, index)
-      else
-        frame.score
-      end
-    end
+    @frames.each_with_index.sum { |frame, index| frame.score(@frames, index) }
   end
 end
