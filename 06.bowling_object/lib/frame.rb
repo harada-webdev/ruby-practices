@@ -12,7 +12,7 @@ class Frame
   end
 
   def score(frames, index)
-    if @first_mark.score + @second_mark.score == 10 && index < 9
+    if (spare? || strike?) && index < 9
       bonus_score(frames, index)
     else
       [@first_mark, @second_mark, @third_mark].map(&:score).sum
@@ -26,7 +26,7 @@ class Frame
     next_second_mark = frames[index + 1].second_mark.score
     after_next_first_mark = frames[index + 2].first_mark.score if index < 8
 
-    if @first_mark.score == 10
+    if strike?
       if next_first_mark == 10 && !after_next_first_mark.nil?
         20 + after_next_first_mark
       else
@@ -35,5 +35,13 @@ class Frame
     else
       10 + next_first_mark
     end
+  end
+
+  def spare?
+    @first_mark.score + @second_mark.score == 10
+  end
+
+  def strike?
+    @first_mark.score == 10
   end
 end
