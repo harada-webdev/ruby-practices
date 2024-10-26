@@ -6,9 +6,7 @@ class Frame
   attr_reader :first_mark, :second_mark
 
   def initialize(marks)
-    marks[1] ||= 0
-    marks[2] ||= 0
-    @first_mark, @second_mark, @third_mark = marks.map { Mark.new(_1) }
+    @first_mark, @second_mark, @third_mark = (0..2).map { |i| Mark.new(marks[i] || 0) }
   end
 
   def score(frames, index)
