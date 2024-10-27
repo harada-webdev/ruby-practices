@@ -20,24 +20,23 @@ class Frame
   private
 
   def bonus_score(next_frame, after_next_frame = nil)
-    next_first_mark = next_frame.first_mark.score
-    next_second_mark = next_frame.second_mark.score
-    after_next_first_mark = after_next_frame.first_mark.score if after_next_frame
-
+    base_bonus_score = 10 + next_frame.first_mark.score
     if strike?
-      if next_first_mark == 10 && after_next_first_mark
-        20 + after_next_first_mark
+      if next_frame.strike? && after_next_frame
+        base_bonus_score + after_next_frame.first_mark.score
       else
-        10 + next_first_mark + next_second_mark
+        base_bonus_score + next_frame.second_mark.score
       end
     else
-      10 + next_first_mark
+      base_bonus_score
     end
   end
 
   def spare?
     @first_mark.score + @second_mark.score == 10
   end
+
+  public
 
   def strike?
     @first_mark.score == 10
