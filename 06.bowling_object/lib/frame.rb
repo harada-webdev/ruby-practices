@@ -28,15 +28,14 @@ class Frame
   end
 
   def bonus_score(next_frame, after_next_frame = nil)
-    base_bonus_score = 10 + next_frame.first_mark.score
-    if strike?
-      if next_frame.strike? && after_next_frame
-        base_bonus_score + after_next_frame.first_mark.score
-      else
-        base_bonus_score + next_frame.second_mark.score
-      end
-    else
-      base_bonus_score
-    end
+    10 + next_frame.first_mark.score + if strike?
+                                         if next_frame.strike? && after_next_frame
+                                           after_next_frame.first_mark.score
+                                         else
+                                           next_frame.second_mark.score
+                                         end
+                                       else
+                                         0
+                                       end
   end
 end
