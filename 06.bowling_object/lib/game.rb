@@ -7,6 +7,10 @@ class Game
     @frames = create_frames(records)
   end
 
+  def calculate_score
+    @frames.each_with_index.sum { |frame, index| frame.score(@frames, index) }
+  end
+
   private
 
   def create_frames(records)
@@ -20,11 +24,5 @@ class Game
       end
     end
     frames << Frame.new(marks)
-  end
-
-  public
-
-  def calculate_score
-    @frames.each_with_index.sum { |frame, index| frame.score(@frames, index) }
   end
 end
