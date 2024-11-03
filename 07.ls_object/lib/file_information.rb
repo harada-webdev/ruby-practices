@@ -3,9 +3,11 @@
 require 'etc'
 require 'time'
 require_relative 'file_type'
+require_relative 'file_permission'
 
 module FileInformation
   include FileType
+  include FilePermission
 
   def block_size(file)
     File::Stat.new(file).blocks / 2
@@ -13,6 +15,10 @@ module FileInformation
 
   def type
     convert_file_type(file_stat)
+  end
+
+  def permissions
+    add_permissions(file_stat)
   end
 
   def nlink
