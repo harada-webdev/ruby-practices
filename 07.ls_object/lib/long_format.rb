@@ -10,7 +10,8 @@ class LongFormat
   end
 
   def show_file
-    puts "#{nlink.to_s.rjust(2)} " \
+    puts "#{type} " \
+         "#{nlink.to_s.rjust(2)} " \
          "#{owner_name} #{group_name} " \
          "#{size.to_s.rjust(4)} " \
          "#{mtime} " \

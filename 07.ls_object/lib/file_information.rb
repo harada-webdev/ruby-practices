@@ -2,10 +2,17 @@
 
 require 'etc'
 require 'time'
+require_relative 'file_type'
 
 module FileInformation
+  include FileType
+
   def block_size(file)
     File::Stat.new(file).blocks / 2
+  end
+
+  def type
+    convert_file_type(file_stat)
   end
 
   def nlink
