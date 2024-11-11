@@ -4,8 +4,9 @@ require 'etc'
 require 'time'
 
 class LongFormat
-  def initialize(file)
+  def initialize(file, target_directory)
     @file = file
+    @target_directory = target_directory
   end
 
   def show_file
@@ -14,7 +15,7 @@ class LongFormat
          "#{Etc.getpwuid(file_stat.uid).name} #{Etc.getgrgid(file_stat.gid).name} " \
          "#{file_stat.size.to_s.rjust(4)} " \
          "#{File.mtime(@file).strftime('%b %e %H:%M').to_s.rjust(4)} " \
-         "#{File.basename(@file)}"
+         "#{directory_or_file_name}"
   end
 
   private
@@ -52,6 +53,16 @@ class LongFormat
       permissions[1] = permissions[1].chop + (permissions[1][2] == 'x' ? 's' : 'S')
     when '4'
       permissions[0] = permissions[0].chop + (permissions[0][2] == 'x' ? 's' : 'S')
+    end
+  end
+
+  def directory_or_file_name
+    if @file == @target_directory
+      '.'
+    elsif @file == @target_directory.parent
+      '..'
+    else
+      File.basename(@file)
     end
   end
 end
