@@ -77,6 +77,8 @@ class LongFormat
       '.'
     elsif @file == @target_directory.parent
       '..'
+    elsif File.symlink?(@file)
+      "#{@file} -> #{File.readlink(@file)}"
     else
       File.basename(@file)
     end
