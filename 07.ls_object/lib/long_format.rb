@@ -14,7 +14,7 @@ class LongFormat
          "#{file_stat.nlink.to_s.rjust(2)} " \
          "#{Etc.getpwuid(file_stat.uid).name} #{Etc.getgrgid(file_stat.gid).name} " \
          "#{size_or_device_info(file_stat).to_s.rjust(4)} " \
-         "#{File.mtime(@file).strftime('%b %e %H:%M').to_s.rjust(4)} " \
+         "#{last_modified_time(file_stat).to_s.rjust(4)} " \
          "#{directory_or_file_name}"
   end
 
@@ -61,6 +61,14 @@ class LongFormat
       file_stat.size
     else
       "#{file_stat.rdev_major}, #{file_stat.rdev_minor}"
+    end
+  end
+
+  def last_modified_time(file_stat)
+    if Time.now.year == file_stat.mtime.year
+      file_stat.mtime.strftime('%b %e %H:%M')
+    else
+      file_stat.mtime.strftime('%b %e %Y')
     end
   end
 
