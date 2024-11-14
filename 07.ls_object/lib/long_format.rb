@@ -4,17 +4,19 @@ require 'etc'
 require 'time'
 
 class LongFormat
-  def initialize(file, target_directory)
+  def initialize(file, target_directory, max_length)
     @file = file
     @target_directory = target_directory
+    @max_length = max_length
   end
 
   def show_file
     puts "#{convert_file_type(file_stat)}#{add_permissions(file_stat)} " \
-         "#{file_stat.nlink.to_s.rjust(2)} " \
-         "#{Etc.getpwuid(file_stat.uid).name} #{Etc.getgrgid(file_stat.gid).name} " \
-         "#{size_or_device_info(file_stat).to_s.rjust(4)} " \
-         "#{last_modified_time(file_stat).to_s.rjust(4)} " \
+         "#{file_stat.nlink.to_s.rjust(@max_length[:nlink])} " \
+         "#{Etc.getpwuid(file_stat.uid).name.to_s.rjust(@max_length[:username])} " \
+         "#{Etc.getpwuid(file_stat.gid).name.to_s.rjust(@max_length[:groupname])} " \
+         "#{size_or_device_info(file_stat).to_s.rjust(@max_length[:size])} " \
+         "#{last_modified_time(file_stat).to_s.rjust(5)} " \
          "#{directory_or_file_name}"
   end
 
@@ -68,7 +70,7 @@ class LongFormat
     if Time.now.year == file_stat.mtime.year
       file_stat.mtime.strftime('%b %e %H:%M')
     else
-      file_stat.mtime.strftime('%b %e %Y')
+      file_stat.mtime.strftime('%b %e  %Y')
     end
   end
 

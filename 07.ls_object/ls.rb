@@ -3,6 +3,7 @@
 
 require 'optparse'
 require 'pathname'
+require_relative 'lib/max_length'
 require_relative 'lib/default_format'
 require_relative 'lib/long_format'
 
@@ -14,13 +15,14 @@ class Ls
 
   def show_files
     files = fetch_files(@options)
+    max_length = @options[:long] ? MaxLength.new(files).file_information : MaxLength.new(files).file_name
     if @options[:long]
       puts "total #{files.sum { |file| File::Stat.new(file).blocks / 2 }}"
-      files.each { |file| LongFormat.new(file, @target_directory).show_file }
+      files.each { |file| LongFormat.new(file, @target_directory, max_length).show_file }
     else
       files_2d_array = Array.new(4) { Array.new(3) }
       files[0..11].each_with_index { |file, index| files_2d_array[index % 4][index / 4] = file }
-      files_2d_array.each { |files_array| DefaultFormat.new(files_array, @target_directory).show_file }
+      files_2d_array.each { |files_array| DefaultFormat.new(files_array, @target_directory, max_length).show_file }
     end
   end
 
