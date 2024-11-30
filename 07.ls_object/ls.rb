@@ -19,7 +19,7 @@ class Ls
       files.each { |file| LongFormat.new(file, @target_directory).show_file }
     else
       files_2d_array = Array.new(4) { Array.new(3) }
-      files.each_with_index { |file, index| files_2d_array[index % 4][index / 4] = file }
+      files[0..11].each_with_index { |file, index| files_2d_array[index % 4][index / 4] = file }
       files_2d_array.each { |files_array| DefaultFormat.new(files_array, @target_directory).show_file }
     end
   end
