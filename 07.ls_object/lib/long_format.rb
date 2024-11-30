@@ -13,7 +13,7 @@ class LongFormat
     puts "#{convert_file_type(file_stat)}#{add_permissions(file_stat)} " \
          "#{file_stat.nlink.to_s.rjust(2)} " \
          "#{Etc.getpwuid(file_stat.uid).name} #{Etc.getgrgid(file_stat.gid).name} " \
-         "#{file_stat.size.to_s.rjust(4)} " \
+         "#{size_or_device_info(file_stat).to_s.rjust(4)} " \
          "#{File.mtime(@file).strftime('%b %e %H:%M').to_s.rjust(4)} " \
          "#{directory_or_file_name}"
   end
@@ -53,6 +53,14 @@ class LongFormat
       permissions[1] = permissions[1].chop + (permissions[1][2] == 'x' ? 's' : 'S')
     when '4'
       permissions[0] = permissions[0].chop + (permissions[0][2] == 'x' ? 's' : 'S')
+    end
+  end
+
+  def size_or_device_info(file_stat)
+    if file_stat.rdev.zero?
+      file_stat.size
+    else
+      "#{file_stat.rdev_major}, #{file_stat.rdev_minor}"
     end
   end
 
