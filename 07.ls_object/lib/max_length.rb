@@ -12,7 +12,7 @@ class MaxLength
   end
 
   def file_information
-    files_stat = @files.map { |file| File::Stat.new(file) }
+    files_stat = @files.map { |file| File.lstat(file) }
     {
       nlink: files_stat.map { |file_stat| file_stat.nlink.to_s.length }.max,
       username: files_stat.map { |file_stat| Etc.getpwuid(file_stat.uid).name.to_s.length }.max,

@@ -23,7 +23,7 @@ class LongFormat
   private
 
   def file_stat
-    File::Stat.new(@file)
+    File.lstat(@file)
   end
 
   def file_type(file_stat)
