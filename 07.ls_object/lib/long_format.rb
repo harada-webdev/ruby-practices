@@ -11,7 +11,7 @@ class LongFormat
   end
 
   def show_file
-    puts "#{convert_file_type(file_stat)}#{add_permissions(file_stat)} " \
+    puts "#{file_type(file_stat)}#{permissions(file_stat)} " \
          "#{file_stat.nlink.to_s.rjust(@max_length[:nlink])} " \
          "#{Etc.getpwuid(file_stat.uid).name.to_s.rjust(@max_length[:username])} " \
          "#{Etc.getpwuid(file_stat.gid).name.to_s.rjust(@max_length[:groupname])} " \
@@ -26,7 +26,7 @@ class LongFormat
     File::Stat.new(@file)
   end
 
-  def convert_file_type(file_stat)
+  def file_type(file_stat)
     {
       'fifo' => 'p',
       'characterSpecial' => 'c',
@@ -38,7 +38,7 @@ class LongFormat
     }[file_stat.ftype]
   end
 
-  def add_permissions(file_stat)
+  def permissions(file_stat)
     ocatal_mode = file_stat.mode.to_s(8)
     permissions = ocatal_mode[-3..].chars.map do |mode|
       ['---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx'][mode.to_i]
