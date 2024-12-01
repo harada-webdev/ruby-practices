@@ -8,7 +8,7 @@ class MaxLength
   end
 
   def file_name
-    @files[0, 11].map { |file| File.basename(file).to_s.length }.max
+    @files[0, 11].map { |file| File.basename(file).to_s.length }.max + 1
   end
 
   def file_information
