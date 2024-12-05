@@ -84,8 +84,9 @@ class Ls
 
   def show_files_by_default_format(files)
     max_length = fetch_file_name_max_length(files)
-    files_2d_array = Array.new(4) { Array.new(3) }
-    files[0..11].each_with_index { |file, index| files_2d_array[index % 4][index / 4] = file }
+    rows = (files.size.to_f / 3).ceil
+    files_2d_array = Array.new(rows) { Array.new(3) }
+    files.each_with_index { |file, index| files_2d_array[index % rows][index / rows] = file }
     files_2d_array.each do |files_array|
       row_files = files_array.compact.map do |file|
         LsFile.new(file, @target_directory, @options).name.ljust(max_length + 1)
@@ -96,7 +97,7 @@ class Ls
   end
 
   def fetch_file_name_max_length(files)
-    files[0, 11].map do |file|
+    files.map do |file|
       LsFile.new(file, @target_directory, @options).name.to_s.length
     end.max + 1
   end
