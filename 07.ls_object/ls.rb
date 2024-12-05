@@ -30,22 +30,23 @@ end
 
 def fetch_files(options, target_directory)
   files = if options[:all]
-            sort_all_files(Dir.foreach(target_directory), target_directory)
+            target_files = Dir.foreach(target_directory)
+            sort_all_files(target_files, target_directory)
           else
             Dir.glob(target_directory.join('*')).sort
           end
   options[:reverse] ? files.reverse : files
 end
 
-def sort_all_files(files, target_directory)
-  files = files.map { |file| target_directory.join(file) }
-  files.sort_by do |file|
-    if file == target_directory
-      [0, file]
-    elsif file == target_directory.parent
-      [1, file]
+def sort_all_files(target_files, target_directory)
+  full_path_files = target_files.map { |target_file| target_directory.join(target_file) }
+  full_path_files.sort_by do |full_path_file|
+    if full_path_file == target_directory
+      [0, full_path_file]
+    elsif full_path_file == target_directory.parent
+      [1, full_path_file]
     else
-      [2, file.basename.sub(/^\./, '')]
+      [2, full_path_file.basename.sub(/^\./, '')]
     end
   end
 end
