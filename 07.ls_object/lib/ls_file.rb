@@ -11,7 +11,7 @@ class LsFile
   end
 
   def block_size
-    File::Stat.new(@file).blocks / 2
+    file_stat.blocks / 2
   end
 
   def file_stat
