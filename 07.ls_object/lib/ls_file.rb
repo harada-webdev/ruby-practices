@@ -4,6 +4,23 @@ require 'etc'
 require 'time'
 
 class LsFile
+  TYPES = {
+    'fifo' => 'p',
+    'characterSpecial' => 'c',
+    'directory' => 'd',
+    'blockSpecial' => 'b',
+    'file' => '-',
+    'link' => 'l',
+    'socket' => 's'
+  }.each do |k, v|
+    k.freeze
+    v.freeze
+  end.freeze
+
+  PERMISSIONS = [
+    '---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx'
+  ].map(&:freeze).freeze
+
   def initialize(file, target_directory, options)
     @file = file
     @target_directory = target_directory
@@ -16,21 +33,13 @@ class LsFile
   end
 
   def type
-    {
-      'fifo' => 'p',
-      'characterSpecial' => 'c',
-      'directory' => 'd',
-      'blockSpecial' => 'b',
-      'file' => '-',
-      'link' => 'l',
-      'socket' => 's'
-    }[@file_stat.ftype]
+    TYPES[@file_stat.ftype]
   end
 
   def permissions
     ocatal_mode = @file_stat.mode.to_s(8)
     permissions = ocatal_mode[-3..].chars.map do |mode|
-      ['---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx'][mode.to_i]
+      PERMISSIONS[mode.to_i]
     end
     add_special_permissions(ocatal_mode, permissions)
     permissions.join
