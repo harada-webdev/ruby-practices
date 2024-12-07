@@ -9,10 +9,11 @@ def main
   options = parse_options
   target_directory = Pathname(ARGV[0] || '.')
   files = fetch_files(options, target_directory)
+  ls_files = files.map { |file| LsFile.new(file, target_directory, options) }
   if options[:long]
-    show_files_by_long_format(files, target_directory, options)
+    show_files_by_long_format(ls_files)
   else
-    show_files_by_default_format(files, target_directory, options)
+    show_files_by_default_format(ls_files)
   end
 end
 
@@ -51,11 +52,10 @@ def sort_all_files(target_files, target_directory)
   end
 end
 
-def show_files_by_long_format(files, target_directory, options)
-  max_length = fetch_file_max_length(files, target_directory, options)
-  puts "total #{calculate_total_block_size(files, target_directory, options)}"
-  files.each do |file|
-    ls_file = LsFile.new(file, target_directory, options)
+def show_files_by_long_format(ls_files)
+  max_length = fetch_file_max_length(ls_files)
+  puts "total #{calculate_total_block_size(ls_files)}"
+  ls_files.each do |ls_file|
     time_format = fetch_time_format(ls_file.file_stat)
     puts [
       ls_file.mode,
@@ -69,8 +69,7 @@ def show_files_by_long_format(files, target_directory, options)
   end
 end
 
-def fetch_file_max_length(files, target_directory, options)
-  ls_files = files.map { |file| LsFile.new(file, target_directory, options) }
+def fetch_file_max_length(ls_files)
   {
     hard_links: ls_files.map { |ls_file| ls_file.hard_links.to_s.length }.max,
     owner_name: ls_files.map { |ls_file| ls_file.owner_name.to_s.length }.max,
@@ -79,10 +78,8 @@ def fetch_file_max_length(files, target_directory, options)
   }
 end
 
-def calculate_total_block_size(files, target_directory, options)
-  files.sum do |file|
-    LsFile.new(file, target_directory, options).block_size
-  end
+def calculate_total_block_size(ls_files)
+  ls_files.sum(&:block_size)
 end
 
 def fetch_time_format(file_stat)
@@ -93,25 +90,25 @@ def fetch_time_format(file_stat)
   end
 end
 
-def show_files_by_default_format(files, target_directory, options)
-  rows = (files.size.to_f / 3).ceil
+def show_files_by_default_format(ls_files)
+  rows = (ls_files.size.to_f / 3).ceil
   nested_files = Array.new(rows) { Array.new(3) }
-  files.each_with_index { |file, index| nested_files[index % rows][index / rows] = file }
-  max_lengths = fetch_file_name_max_lengths(nested_files, target_directory, options)
+  ls_files.each_with_index { |ls_file, index| nested_files[index % rows][index / rows] = ls_file }
+  max_lengths = fetch_file_name_max_lengths(nested_files)
   nested_files.each do |row_files|
     formatted_row_files = row_files.compact.map.with_index do |file, index|
-      LsFile.new(file, target_directory, options).name.ljust(max_lengths[index] + 2)
+      file.name.ljust(max_lengths[index] + 2)
     end
     puts formatted_row_files.join
   end
 end
 
-def fetch_file_name_max_lengths(nested_files, target_directory, options)
+def fetch_file_name_max_lengths(nested_files)
   max_lengths = [0, 0, 0]
 
   nested_files.each do |row_files|
     row_files.compact.each_with_index do |file, index|
-      file_name_length = LsFile.new(file, target_directory, options).name.length
+      file_name_length = file.name.length
       max_lengths[index] = [max_lengths[index], file_name_length].max
     end
   end
