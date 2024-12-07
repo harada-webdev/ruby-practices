@@ -63,7 +63,7 @@ def show_files_by_long_format(ls_files)
       ls_file.owner_name.to_s.rjust(max_length[:owner_name]),
       ls_file.owner_group_name.to_s.rjust(max_length[:owner_group_name]),
       ls_file.size_or_device_info.to_s.rjust(max_length[:size]),
-      ls_file.last_modified_time.strftime(time_format).to_s.rjust(5),
+      ls_file.last_modified_time.strftime(time_format),
       ls_file.name
     ].join(' ')
   end
