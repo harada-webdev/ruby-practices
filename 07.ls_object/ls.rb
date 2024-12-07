@@ -57,14 +57,15 @@ def show_files_by_long_format(files, target_directory, options)
   files.each do |file|
     ls_file = LsFile.new(file, target_directory, options)
     time_format = fetch_time_format(ls_file.file_stat)
-    puts "#{ls_file.type}" \
-         "#{ls_file.permission} " \
-         "#{ls_file.hard_links.to_s.rjust(max_length[:hard_links])} " \
-         "#{ls_file.owner_name.to_s.rjust(max_length[:owner_name])} " \
-         "#{ls_file.owner_group_name.to_s.rjust(max_length[:owner_group_name])} " \
-         "#{ls_file.size_or_device_info.to_s.rjust(max_length[:size])} " \
-         "#{ls_file.last_modified_time.strftime(time_format).to_s.rjust(5)} " \
-         "#{ls_file.name}"
+    puts [
+      ls_file.mode,
+      ls_file.hard_links.to_s.rjust(max_length[:hard_links]),
+      ls_file.owner_name.to_s.rjust(max_length[:owner_name]),
+      ls_file.owner_group_name.to_s.rjust(max_length[:owner_group_name]),
+      ls_file.size_or_device_info.to_s.rjust(max_length[:size]),
+      ls_file.last_modified_time.strftime(time_format).to_s.rjust(5),
+      ls_file.name
+    ].join(' ')
   end
 end
 

@@ -34,17 +34,8 @@ class LsFile
     @file_stat.blocks / 2
   end
 
-  def type
-    TYPES[@file_stat.ftype]
-  end
-
-  def permission
-    ocatal_mode = @file_stat.mode.to_s(8)
-    permissions = ocatal_mode[-3..].chars.map do |mode|
-      PERMISSIONS[mode.to_i]
-    end
-    add_special_permissions(ocatal_mode, permissions)
-    permissions.join
+  def mode
+    "#{type}#{permission}"
   end
 
   def hard_links
@@ -84,6 +75,19 @@ class LsFile
   end
 
   private
+
+  def type
+    TYPES[@file_stat.ftype]
+  end
+
+  def permission
+    ocatal_mode = @file_stat.mode.to_s(8)
+    permissions = ocatal_mode[-3..].chars.map do |mode|
+      PERMISSIONS[mode.to_i]
+    end
+    add_special_permissions(ocatal_mode, permissions)
+    permissions.join
+  end
 
   def add_special_permissions(ocatal_mode, permissions)
     case ocatal_mode[2]
