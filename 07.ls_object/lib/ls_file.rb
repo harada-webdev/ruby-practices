@@ -8,14 +8,11 @@ class LsFile
     @file = file
     @target_directory = target_directory
     @options = options
+    @file_stat = File.lstat(@file)
   end
 
   def block_size
-    file_stat.blocks / 2
-  end
-
-  def file_stat
-    File.lstat(@file)
+    @file_stat.blocks / 2
   end
 
   def type
@@ -27,11 +24,11 @@ class LsFile
       'file' => '-',
       'link' => 'l',
       'socket' => 's'
-    }[file_stat.ftype]
+    }[@file_stat.ftype]
   end
 
   def permissions
-    ocatal_mode = file_stat.mode.to_s(8)
+    ocatal_mode = @file_stat.mode.to_s(8)
     permissions = ocatal_mode[-3..].chars.map do |mode|
       ['---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx'][mode.to_i]
     end
@@ -40,30 +37,30 @@ class LsFile
   end
 
   def hard_links
-    file_stat.nlink
+    @file_stat.nlink
   end
 
   def owner_name
-    Etc.getpwuid(file_stat.uid).name
+    Etc.getpwuid(@file_stat.uid).name
   end
 
   def owner_group_name
-    Etc.getpwuid(file_stat.gid).name
+    Etc.getpwuid(@file_stat.gid).name
   end
 
   def size_or_device_info
-    if file_stat.rdev.zero?
-      file_stat.size
+    if @file_stat.rdev.zero?
+      @file_stat.size
     else
-      "#{file_stat.rdev_major}, #{file_stat.rdev_minor}"
+      "#{@file_stat.rdev_major}, #{@file_stat.rdev_minor}"
     end
   end
 
   def last_modified_time
-    if Time.now.year == file_stat.mtime.year
-      file_stat.mtime.strftime('%b %e %H:%M')
+    if Time.now.year == @file_stat.mtime.year
+      @file_stat.mtime.strftime('%b %e %H:%M')
     else
-      file_stat.mtime.strftime('%b %e  %Y')
+      @file_stat.mtime.strftime('%b %e  %Y')
     end
   end
 
