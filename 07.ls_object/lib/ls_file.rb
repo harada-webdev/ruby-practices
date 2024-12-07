@@ -4,6 +4,8 @@ require 'etc'
 require 'time'
 
 class LsFile
+  attr_reader :file_stat
+
   TYPES = {
     'fifo' => 'p',
     'characterSpecial' => 'c',
@@ -66,11 +68,7 @@ class LsFile
   end
 
   def last_modified_time
-    if Time.now.year == @file_stat.mtime.year
-      @file_stat.mtime.strftime('%b %e %H:%M')
-    else
-      @file_stat.mtime.strftime('%b %e  %Y')
-    end
+    @file_stat.mtime
   end
 
   def name
