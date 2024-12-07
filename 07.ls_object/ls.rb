@@ -54,7 +54,7 @@ end
 
 def show_files_by_long_format(ls_files)
   max_length = fetch_file_max_length(ls_files)
-  puts "total #{calculate_total_block_size(ls_files)}"
+  puts "total #{ls_files.sum(&:block_size)}"
   ls_files.each do |ls_file|
     time_format = fetch_time_format(ls_file.file_stat)
     puts [
@@ -76,10 +76,6 @@ def fetch_file_max_length(ls_files)
     owner_group_name: ls_files.map { |ls_file| ls_file.owner_group_name.to_s.length }.max,
     size: ls_files.map { |ls_file| ls_file.size_or_device_info.to_s.length }.max
   }
-end
-
-def calculate_total_block_size(ls_files)
-  ls_files.sum(&:block_size)
 end
 
 def fetch_time_format(file_stat)
