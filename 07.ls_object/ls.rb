@@ -88,10 +88,10 @@ end
 
 def show_files_by_default_format(files, target_directory, options)
   rows = (files.size.to_f / 3).ceil
-  files_2d_array = Array.new(rows) { Array.new(3) }
-  files.each_with_index { |file, index| files_2d_array[index % rows][index / rows] = file }
-  max_lengths = fetch_file_name_max_lengths(files_2d_array, target_directory, options)
-  files_2d_array.each do |files_array|
+  nested_files = Array.new(rows) { Array.new(3) }
+  files.each_with_index { |file, index| nested_files[index % rows][index / rows] = file }
+  max_lengths = fetch_file_name_max_lengths(nested_files, target_directory, options)
+  nested_files.each do |files_array|
     formatted_row_files = files_array.compact.map.with_index do |file, index|
       LsFile.new(file, target_directory, options).name.ljust(max_lengths[index] + 2)
     end
@@ -99,10 +99,10 @@ def show_files_by_default_format(files, target_directory, options)
   end
 end
 
-def fetch_file_name_max_lengths(files_2d_array, target_directory, options)
+def fetch_file_name_max_lengths(nested_files, target_directory, options)
   max_lengths = [0, 0, 0]
 
-  files_2d_array.each do |files_array|
+  nested_files.each do |files_array|
     files_array.compact.each_with_index do |file, index|
       file_name_length = LsFile.new(file, target_directory, options).name.length
       max_lengths[index] = [max_lengths[index], file_name_length].max
