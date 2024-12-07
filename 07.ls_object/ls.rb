@@ -91,8 +91,8 @@ def show_files_by_default_format(files, target_directory, options)
   nested_files = Array.new(rows) { Array.new(3) }
   files.each_with_index { |file, index| nested_files[index % rows][index / rows] = file }
   max_lengths = fetch_file_name_max_lengths(nested_files, target_directory, options)
-  nested_files.each do |files_array|
-    formatted_row_files = files_array.compact.map.with_index do |file, index|
+  nested_files.each do |row_files|
+    formatted_row_files = row_files.compact.map.with_index do |file, index|
       LsFile.new(file, target_directory, options).name.ljust(max_lengths[index] + 2)
     end
     puts formatted_row_files.join
@@ -102,8 +102,8 @@ end
 def fetch_file_name_max_lengths(nested_files, target_directory, options)
   max_lengths = [0, 0, 0]
 
-  nested_files.each do |files_array|
-    files_array.compact.each_with_index do |file, index|
+  nested_files.each do |row_files|
+    row_files.compact.each_with_index do |file, index|
       file_name_length = LsFile.new(file, target_directory, options).name.length
       max_lengths[index] = [max_lengths[index], file_name_length].max
     end
