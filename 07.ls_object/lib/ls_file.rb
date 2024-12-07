@@ -36,7 +36,7 @@ class LsFile
     TYPES[@file_stat.ftype]
   end
 
-  def permissions
+  def permission
     ocatal_mode = @file_stat.mode.to_s(8)
     permissions = ocatal_mode[-3..].chars.map do |mode|
       PERMISSIONS[mode.to_i]

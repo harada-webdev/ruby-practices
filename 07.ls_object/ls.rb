@@ -57,7 +57,7 @@ def show_files_by_long_format(files, target_directory, options)
   files.each do |file|
     ls_file = LsFile.new(file, target_directory, options)
     puts "#{ls_file.type}" \
-         "#{ls_file.permissions} " \
+         "#{ls_file.permission} " \
          "#{ls_file.hard_links.to_s.rjust(max_length[:hard_links])} " \
          "#{ls_file.owner_name.to_s.rjust(max_length[:owner_name])} " \
          "#{ls_file.owner_group_name.to_s.rjust(max_length[:owner_group_name])} " \
