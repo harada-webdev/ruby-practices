@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'etc'
-require 'time'
 
 class LsFile
   attr_reader :file_stat
