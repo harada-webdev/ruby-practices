@@ -13,14 +13,11 @@ class LsFile
     'file' => '-',
     'link' => 'l',
     'socket' => 's'
-  }.each do |k, v|
-    k.freeze
-    v.freeze
-  end.freeze
+  }.freeze
 
   PERMISSIONS = [
     '---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx'
-  ].map(&:freeze).freeze
+  ].freeze
 
   def initialize(file, target_directory, options)
     @file = file
