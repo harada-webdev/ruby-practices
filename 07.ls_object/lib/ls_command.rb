@@ -5,6 +5,8 @@ require 'pathname'
 require_relative 'ls_file'
 
 class LsCommand
+  COLS = 3
+
   def show_files
     options = parse_options
     target_directory = Pathname(ARGV[0] || '.')
@@ -89,8 +91,8 @@ class LsCommand
   end
 
   def show_files_by_default_format(ls_files)
-    rows = (ls_files.size.to_f / 3).ceil
-    nested_files = Array.new(rows) { Array.new(3) }
+    rows = (ls_files.size.to_f / COLS).ceil
+    nested_files = Array.new(rows) { Array.new(COLS) }
     ls_files.each_with_index { |ls_file, index| nested_files[index % rows][index / rows] = ls_file }
     max_lengths = fetch_file_name_max_lengths(nested_files)
     nested_files.each do |row_files|
@@ -102,7 +104,7 @@ class LsCommand
   end
 
   def fetch_file_name_max_lengths(nested_files)
-    max_lengths = [0, 0, 0]
+    max_lengths = [0] * COLS
 
     nested_files.each do |row_files|
       row_files.compact.each_with_index do |file, index|
