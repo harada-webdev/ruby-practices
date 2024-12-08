@@ -43,7 +43,7 @@ class LsFile
   end
 
   def owner_group_name
-    Etc.getpwuid(@file_stat.gid).name
+    Etc.getgrgid(@file_stat.gid).name
   end
 
   def size_or_device_info
