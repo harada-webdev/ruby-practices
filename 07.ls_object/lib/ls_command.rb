@@ -57,10 +57,10 @@ class LsCommand
   end
 
   def show_files_by_long_format(ls_files)
-    max_length = fetch_file_max_length(ls_files)
+    max_length = bring_file_max_length(ls_files)
     puts "total #{ls_files.sum(&:block_size)}"
     ls_files.each do |ls_file|
-      time_format = fetch_time_format(ls_file.file_stat)
+      time_format = bring_time_format(ls_file.file_stat)
       puts [
         ls_file.mode,
         ls_file.hard_links.to_s.rjust(max_length[:hard_links]),
@@ -73,7 +73,7 @@ class LsCommand
     end
   end
 
-  def fetch_file_max_length(ls_files)
+  def bring_file_max_length(ls_files)
     {
       hard_links: ls_files.map { |ls_file| ls_file.hard_links.to_s.length }.max,
       owner_name: ls_files.map { |ls_file| ls_file.owner_name.to_s.length }.max,
@@ -82,7 +82,7 @@ class LsCommand
     }
   end
 
-  def fetch_time_format(file_stat)
+  def bring_time_format(file_stat)
     if Time.now.year == file_stat.mtime.year
       '%b %e %H:%M'
     else
@@ -94,7 +94,7 @@ class LsCommand
     rows = (ls_files.size.to_f / COLS).ceil
     nested_files = Array.new(rows) { Array.new(COLS) }
     ls_files.each_with_index { |ls_file, index| nested_files[index % rows][index / rows] = ls_file }
-    max_lengths = fetch_file_name_max_lengths(nested_files)
+    max_lengths = bring_file_name_max_lengths(nested_files)
     nested_files.each do |row_files|
       formatted_row_files = row_files.compact.map.with_index do |file, index|
         file.name.ljust(max_lengths[index] + 2)
@@ -103,7 +103,7 @@ class LsCommand
     end
   end
 
-  def fetch_file_name_max_lengths(nested_files)
+  def bring_file_name_max_lengths(nested_files)
     max_lengths = [0] * COLS
 
     nested_files.each do |row_files|
