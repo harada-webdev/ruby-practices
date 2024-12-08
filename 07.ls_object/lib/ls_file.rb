@@ -31,7 +31,7 @@ class LsFile
   end
 
   def mode
-    "#{type}#{permission}"
+    "#{TYPES[@file_stat.ftype]}#{permission}"
   end
 
   def hard_links
@@ -71,10 +71,6 @@ class LsFile
   end
 
   private
-
-  def type
-    TYPES[@file_stat.ftype]
-  end
 
   def permission
     ocatal_mode = @file_stat.mode.to_s(8)
