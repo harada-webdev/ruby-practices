@@ -3,7 +3,9 @@
 require 'etc'
 
 class LsFile
+  include Comparable
   attr_reader :file_stat
+  attr_reader :file_path
 
   TYPES = {
     'fifo' => 'p',
@@ -19,11 +21,19 @@ class LsFile
     '---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx'
   ].freeze
 
-  def initialize(file, target_directory, options)
-    @file = file
+  def initialize(file_path, target_directory, options)
+    @file_path = file_path
     @target_directory = target_directory
     @options = options
-    @file_stat = File.lstat(@file)
+    @file_stat = File.lstat(@file_path)
+  end
+
+  def hidden?
+    File.basename(@file_path).start_with?('.') || target_directory? || parent_directory?
+  end
+
+  def <=>(other)
+    name.sub(/^\./, '') <=> other.name.sub(/^\./, '')
   end
 
   def block_size
@@ -59,18 +69,26 @@ class LsFile
   end
 
   def name
-    if @file == @target_directory
+    if target_directory?
       '.'
-    elsif @file == @target_directory.parent
+    elsif parent_directory?
       '..'
-    elsif File.symlink?(@file) && @options[:long]
-      "#{@file} -> #{File.readlink(@file)}"
+    elsif File.symlink?(@file_path) && @options[:long]
+      "#{@file_path} -> #{File.readlink(@file_path)}"
     else
-      File.basename(@file)
+      File.basename(@file_path)
     end
   end
 
   private
+
+  def target_directory?
+    @file_path == @target_directory
+  end
+
+  def parent_directory?
+    @file_path == @target_directory.parent
+  end
 
   def permission
     ocatal_mode = @file_stat.mode.to_s(8)

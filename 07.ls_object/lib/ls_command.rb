@@ -9,9 +9,7 @@ class LsCommand
 
   def show_files
     options = parse_options
-    target_directory = Pathname(ARGV[0] || '.')
-    files = fetch_files(options, target_directory)
-    ls_files = files.map { |file| LsFile.new(file, target_directory, options) }
+    ls_files = bring_ls_files(options)
     if options[:long]
       show_files_by_long_format(ls_files)
     else
@@ -33,27 +31,13 @@ class LsCommand
     options
   end
 
-  def fetch_files(options, target_directory)
-    files = if options[:all]
-              target_files = Dir.foreach(target_directory)
-              sort_all_files(target_files, target_directory)
-            else
-              Dir.glob(target_directory.join('*')).sort
-            end
-    options[:reverse] ? files.reverse : files
-  end
-
-  def sort_all_files(target_files, target_directory)
-    full_path_files = target_files.map { |target_file| target_directory.join(target_file) }
-    full_path_files.sort_by do |full_path_file|
-      if full_path_file == target_directory
-        [0, full_path_file]
-      elsif full_path_file == target_directory.parent
-        [1, full_path_file]
-      else
-        [2, full_path_file.basename.sub(/^\./, '')]
-      end
-    end
+  def bring_ls_files(options)
+    target_directory = Pathname(File.expand_path(ARGV[0] || '.'))
+    files = Dir.foreach(target_directory)
+    file_paths = files.map { |file| target_directory.join(file) }
+    ls_files = file_paths.map { |file_path| LsFile.new(file_path, target_directory, options) }
+    filtered_ls_files = options[:all] ? ls_files : ls_files.reject(&:hidden?)
+    options[:reverse] ? filtered_ls_files.sort.reverse : filtered_ls_files.sort
   end
 
   def show_files_by_long_format(ls_files)
