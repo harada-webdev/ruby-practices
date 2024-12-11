@@ -40,7 +40,7 @@ class LsCommand
   end
 
   def show_files_in_long_format(ls_files)
-    max_length = bring_file_max_length(ls_files)
+    max_length = find_file_max_length(ls_files)
     puts "total #{ls_files.sum(&:block_size)}"
     ls_files.each do |ls_file|
       time_format = bring_time_format(ls_file.last_modified_time)
@@ -56,7 +56,7 @@ class LsCommand
     end
   end
 
-  def bring_file_max_length(ls_files)
+  def find_file_max_length(ls_files)
     {
       hard_links: ls_files.map { |ls_file| ls_file.hard_links.to_s.length }.max,
       owner_name: ls_files.map { |ls_file| ls_file.owner_name.to_s.length }.max,
