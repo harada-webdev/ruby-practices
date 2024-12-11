@@ -9,7 +9,7 @@ class LsCommand
 
   def show_files
     options = parse_options
-    ls_files = bring_ls_files(options)
+    ls_files = build_ls_files(options)
     if options[:long]
       show_files_in_long_format(ls_files)
     else
@@ -31,7 +31,7 @@ class LsCommand
     options
   end
 
-  def bring_ls_files(options)
+  def build_ls_files(options)
     target_directory = Pathname(ARGV[0] || '.')
     files = Dir.foreach(target_directory)
     ls_files = files.map { |file| LsFile.new(file, target_directory, options) }
