@@ -43,7 +43,7 @@ class LsCommand
     max_length = find_file_max_length(ls_files)
     puts "total #{ls_files.sum(&:block_size)}"
     ls_files.each do |ls_file|
-      time_format = bring_time_format(ls_file.last_modified_time)
+      time_format = make_time_format(ls_file.last_modified_time)
       ls_file_properties = []
       ls_file_properties << ls_file.mode
       ls_file_properties << ls_file.hard_links.to_s.rjust(max_length[:hard_links])
@@ -65,7 +65,7 @@ class LsCommand
     }
   end
 
-  def bring_time_format(last_modified_time)
+  def make_time_format(last_modified_time)
     if Time.now.year == last_modified_time.year
       '%b %e %H:%M'
     else
