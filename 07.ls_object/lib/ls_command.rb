@@ -88,7 +88,7 @@ class LsCommand
   end
 
   def bring_file_name_max_lengths(nested_files)
-    max_lengths = [0] * COLS
+    max_lengths = Array.new(COLS, 0)
 
     nested_files.each do |row_files|
       row_files.compact.each_with_index do |file, index|
