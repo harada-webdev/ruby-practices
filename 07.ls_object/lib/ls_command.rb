@@ -32,10 +32,9 @@ class LsCommand
   end
 
   def bring_ls_files(options)
-    target_directory = Pathname(File.expand_path(ARGV[0] || '.'))
+    target_directory = Pathname(ARGV[0] || '.')
     files = Dir.foreach(target_directory)
-    file_paths = files.map { |file| target_directory.join(file) }
-    ls_files = file_paths.map { |file_path| LsFile.new(file_path, target_directory, options) }
+    ls_files = files.map { |file| LsFile.new(file, target_directory, options) }
     filtered_ls_files = options[:all] ? ls_files : ls_files.reject(&:hidden?)
     options[:reverse] ? filtered_ls_files.sort.reverse : filtered_ls_files.sort
   end
