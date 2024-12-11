@@ -90,7 +90,7 @@ class LsFile
   end
 
   def permission
-    ocatal_mode = @file_stat.mode.to_s(8)
+    ocatal_mode = @file_stat.mode.to_s(8).rjust(6, '0')
     permissions = ocatal_mode[-3..].chars.map do |mode|
       PERMISSIONS[mode.to_i]
     end
