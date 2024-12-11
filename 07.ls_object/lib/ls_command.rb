@@ -77,7 +77,7 @@ class LsCommand
     rows = (ls_files.size.to_f / COLS).ceil
     nested_files = Array.new(rows) { Array.new(COLS) }
     ls_files.each_with_index { |ls_file, index| nested_files[index % rows][index / rows] = ls_file }
-    max_lengths = bring_file_name_max_lengths(nested_files)
+    max_lengths = find_file_name_max_lengths(nested_files)
     nested_files.each do |row_files|
       formatted_row_files = row_files.compact.map.with_index do |file, index|
         file.name.ljust(max_lengths[index] + 2)
@@ -86,7 +86,7 @@ class LsCommand
     end
   end
 
-  def bring_file_name_max_lengths(nested_files)
+  def find_file_name_max_lengths(nested_files)
     max_lengths = Array.new(COLS, 0)
 
     nested_files.each do |row_files|
