@@ -4,8 +4,6 @@ require 'etc'
 
 class LsFile
   include Comparable
-  attr_reader :file_stat
-  attr_reader :file_path
 
   TYPES = {
     'fifo' => 'p',
