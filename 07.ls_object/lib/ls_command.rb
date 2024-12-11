@@ -11,9 +11,9 @@ class LsCommand
     options = parse_options
     ls_files = bring_ls_files(options)
     if options[:long]
-      show_files_by_long_format(ls_files)
+      show_files_in_long_format(ls_files)
     else
-      show_files_by_default_format(ls_files)
+      show_files_in_default_format(ls_files)
     end
   end
 
@@ -40,7 +40,7 @@ class LsCommand
     options[:reverse] ? filtered_ls_files.sort.reverse : filtered_ls_files.sort
   end
 
-  def show_files_by_long_format(ls_files)
+  def show_files_in_long_format(ls_files)
     max_length = bring_file_max_length(ls_files)
     puts "total #{ls_files.sum(&:block_size)}"
     ls_files.each do |ls_file|
@@ -74,7 +74,7 @@ class LsCommand
     end
   end
 
-  def show_files_by_default_format(ls_files)
+  def show_files_in_default_format(ls_files)
     rows = (ls_files.size.to_f / COLS).ceil
     nested_files = Array.new(rows) { Array.new(COLS) }
     ls_files.each_with_index { |ls_file, index| nested_files[index % rows][index / rows] = ls_file }
