@@ -34,7 +34,7 @@ class LsCommand
   def build_ls_files(options)
     target_directory = Pathname(ARGV[0] || '.')
     file_basenames = Dir.foreach(target_directory)
-    ls_files = file_basenames.map { |file_basename| LsFile.new(file_basename, target_directory, options) }
+    ls_files = file_basenames.map { |file_basename| LsFile.new(file_basename, target_directory) }
     filtered_ls_files = options[:all] ? ls_files : ls_files.reject(&:hidden?)
     options[:reverse] ? filtered_ls_files.sort.reverse : filtered_ls_files.sort
   end
@@ -50,7 +50,7 @@ class LsCommand
       ls_file_properties << ls_file.owner_group_name.to_s.ljust(max_length[:owner_group_name])
       ls_file_properties << ls_file.size_or_device_info.to_s.rjust(max_length[:size])
       ls_file_properties << format_last_modified_time(ls_file)
-      ls_file_properties << ls_file.name
+      ls_file_properties << format_name(ls_file)
       puts ls_file_properties.join(' ')
     end
   end
@@ -70,6 +70,16 @@ class LsCommand
       ls_file_last_modified_time.strftime('%b %e %H:%M')
     else
       ls_file_last_modified_time.strftime('%b %e  %Y')
+    end
+  end
+
+  def format_name(ls_file)
+    ls_file_path = ls_file.file_path
+    ls_file_name = ls_file.name
+    if File.symlink?(ls_file_path)
+      "#{ls_file_name} -> #{File.readlink(ls_file_path)}"
+    else
+      ls_file_name
     end
   end
 

@@ -3,6 +3,8 @@
 require 'etc'
 
 class LsFile
+  attr_reader :file_path
+
   include Comparable
 
   TYPES = {
@@ -19,10 +21,9 @@ class LsFile
     '---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx'
   ].freeze
 
-  def initialize(file_basename, target_directory, options)
+  def initialize(file_basename, target_directory)
     @file_basename = file_basename
     @target_directory = target_directory
-    @options = options
     @file_path = @target_directory.join(@file_basename)
     @file_stat = File.lstat(@file_path)
   end
@@ -72,8 +73,6 @@ class LsFile
       '.'
     elsif parent_directory?
       '..'
-    elsif File.symlink?(@file_path) && @options[:long]
-      "#{@file_basename} -> #{File.readlink(@file_path)}"
     else
       @file_basename
     end
