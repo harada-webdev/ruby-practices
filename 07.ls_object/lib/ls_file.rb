@@ -19,16 +19,16 @@ class LsFile
     '---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx'
   ].freeze
 
-  def initialize(file, target_directory, options)
-    @file = file
+  def initialize(file_basename, target_directory, options)
+    @file_basename = file_basename
     @target_directory = target_directory
     @options = options
-    @file_path = @target_directory.join(@file)
+    @file_path = @target_directory.join(@file_basename)
     @file_stat = File.lstat(@file_path)
   end
 
   def hidden?
-    @file.start_with?('.') || target_directory? || parent_directory?
+    @file_basename.start_with?('.') || target_directory? || parent_directory?
   end
 
   def <=>(other)
@@ -73,9 +73,9 @@ class LsFile
     elsif parent_directory?
       '..'
     elsif File.symlink?(@file_path) && @options[:long]
-      "#{@file} -> #{File.readlink(@file_path)}"
+      "#{@file_basename} -> #{File.readlink(@file_path)}"
     else
-      @file
+      @file_basename
     end
   end
 
