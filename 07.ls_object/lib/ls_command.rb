@@ -7,13 +7,13 @@ require_relative 'ls_file'
 class LsCommand
   COLS = 3
 
-  def show_files
+  def show_ls_files
     options = parse_options
     ls_files = build_ls_files(options)
     if options[:long]
-      show_files_in_long_format(ls_files)
+      show_ls_files_in_long_format(ls_files)
     else
-      show_files_in_default_format(ls_files)
+      show_ls_files_in_default_format(ls_files)
     end
   end
 
@@ -39,9 +39,9 @@ class LsCommand
     options[:reverse] ? filtered_ls_files.sort.reverse : filtered_ls_files.sort
   end
 
-  def show_files_in_long_format(ls_files)
+  def show_ls_files_in_long_format(ls_files)
     puts "total #{ls_files.sum(&:block_size)}"
-    max_length = find_file_max_length(ls_files)
+    max_length = find_ls_file_max_lengths(ls_files)
     ls_files.each do |ls_file|
       ls_file_properties = []
       ls_file_properties << ls_file.mode
@@ -55,7 +55,7 @@ class LsCommand
     end
   end
 
-  def find_file_max_length(ls_files)
+  def find_ls_file_max_lengths(ls_files)
     {
       hard_links: ls_files.map { |ls_file| ls_file.hard_links.to_s.length }.max,
       owner_name: ls_files.map { |ls_file| ls_file.owner_name.to_s.length }.max,
@@ -83,24 +83,24 @@ class LsCommand
     end
   end
 
-  def show_files_in_default_format(ls_files)
+  def show_ls_files_in_default_format(ls_files)
     rows = (ls_files.size.to_f / COLS).ceil
-    nested_files = Array.new(rows) { Array.new(COLS) }
-    ls_files.each_with_index { |ls_file, index| nested_files[index % rows][index / rows] = ls_file }
-    max_lengths = find_file_name_max_lengths(nested_files)
-    nested_files.each do |row_files|
-      formatted_row_files = row_files.compact.map.with_index do |file, index|
-        file.name.ljust(max_lengths[index] + 2)
+    nested_ls_files = Array.new(rows) { Array.new(COLS) }
+    ls_files.each_with_index { |ls_file, index| nested_ls_files[index % rows][index / rows] = ls_file }
+    max_lengths = find_ls_file_name_max_lengths(nested_ls_files)
+    nested_ls_files.each do |row_ls_files|
+      formatted_row_ls_files = row_ls_files.compact.map.with_index do |ls_file, index|
+        ls_file.name.ljust(max_lengths[index] + 2)
       end
-      puts formatted_row_files.join
+      puts formatted_row_ls_files.join
     end
   end
 
-  def find_file_name_max_lengths(nested_files)
-    nested_files.each_with_object(Array.new(COLS, 0)) do |row_files, max_lengths|
-      row_files.compact.each_with_index do |file, index|
-        file_name_length = file.name.length
-        max_lengths[index] = [max_lengths[index], file_name_length].max
+  def find_ls_file_name_max_lengths(nested_ls_files)
+    nested_ls_files.each_with_object(Array.new(COLS, 0)) do |row_ls_files, max_lengths|
+      row_ls_files.compact.each_with_index do |ls_file, index|
+        ls_file_name_length = ls_file.name.length
+        max_lengths[index] = [max_lengths[index], ls_file_name_length].max
       end
     end
   end

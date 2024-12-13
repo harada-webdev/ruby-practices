@@ -3,4 +3,4 @@
 
 require_relative 'lib/ls_command'
 
-LsCommand.new.show_files
+LsCommand.new.show_ls_files
