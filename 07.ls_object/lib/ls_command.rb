@@ -86,15 +86,11 @@ class LsCommand
   end
 
   def find_file_name_max_lengths(nested_files)
-    max_lengths = Array.new(COLS, 0)
-
-    nested_files.each do |row_files|
+    nested_files.each_with_object(Array.new(COLS, 0)) do |row_files, max_lengths|
       row_files.compact.each_with_index do |file, index|
         file_name_length = file.name.length
         max_lengths[index] = [max_lengths[index], file_name_length].max
       end
     end
-
-    max_lengths
   end
 end
