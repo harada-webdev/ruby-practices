@@ -49,7 +49,7 @@ class LsCommand
       ls_file_properties << ls_file.owner_name.to_s.ljust(max_length[:owner_name])
       ls_file_properties << ls_file.owner_group_name.to_s.ljust(max_length[:owner_group_name])
       ls_file_properties << ls_file.size_or_device_info.to_s.rjust(max_length[:size])
-      ls_file_properties << ls_file.last_modified_time.strftime(make_time_format(ls_file))
+      ls_file_properties << format_last_modified_time(ls_file)
       ls_file_properties << ls_file.name
       puts ls_file_properties.join(' ')
     end
@@ -64,11 +64,12 @@ class LsCommand
     }
   end
 
-  def make_time_format(ls_file)
-    if Time.now.year == ls_file.last_modified_time.year
-      '%b %e %H:%M'
+  def format_last_modified_time(ls_file)
+    ls_file_last_modified_time = ls_file.last_modified_time
+    if Time.now.year == ls_file_last_modified_time.year
+      ls_file_last_modified_time.strftime('%b %e %H:%M')
     else
-      '%b %e  %Y'
+      ls_file_last_modified_time.strftime('%b %e  %Y')
     end
   end
 
