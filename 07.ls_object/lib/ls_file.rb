@@ -3,7 +3,7 @@
 require 'etc'
 
 class LsFile
-  attr_reader :file_path
+  attr_reader :path
 
   include Comparable
 
@@ -24,8 +24,8 @@ class LsFile
   def initialize(basename, target_directory)
     @basename = basename
     @target_directory = target_directory
-    @file_path = @target_directory.join(@basename)
-    @file_stat = File.lstat(@file_path)
+    @path = @target_directory.join(@basename)
+    @file_stat = File.lstat(@path)
   end
 
   def hidden?
@@ -81,11 +81,11 @@ class LsFile
   private
 
   def target_directory?
-    @file_path == @target_directory
+    @path == @target_directory
   end
 
   def parent_directory?
-    @file_path == @target_directory.parent
+    @path == @target_directory.parent
   end
 
   def permission
