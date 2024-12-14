@@ -15,9 +15,7 @@ class LsFile
     'socket' => 's'
   }.freeze
 
-  PERMISSIONS = [
-    '---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx'
-  ].freeze
+  PERMISSIONS = %w[--- --x -w- -wx r-- r-x rw- rwx].freeze
 
   def initialize(basename, target_directory)
     @basename = basename
