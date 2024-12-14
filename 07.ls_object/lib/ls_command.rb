@@ -33,8 +33,8 @@ class LsCommand
 
   def build_ls_files(options)
     target_directory = Pathname(ARGV[0] || '.')
-    file_basenames = Dir.foreach(target_directory)
-    ls_files = file_basenames.map { |file_basename| LsFile.new(file_basename, target_directory) }
+    basenames = Dir.foreach(target_directory)
+    ls_files = basenames.map { |basename| LsFile.new(basename, target_directory) }
     filtered_ls_files = options[:all] ? ls_files : ls_files.reject(&:hidden?)
     options[:reverse] ? filtered_ls_files.sort.reverse : filtered_ls_files.sort
   end

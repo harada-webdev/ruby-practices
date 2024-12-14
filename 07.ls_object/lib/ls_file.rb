@@ -21,15 +21,15 @@ class LsFile
     '---', '--x', '-w-', '-wx', 'r--', 'r-x', 'rw-', 'rwx'
   ].freeze
 
-  def initialize(file_basename, target_directory)
-    @file_basename = file_basename
+  def initialize(basename, target_directory)
+    @basename = basename
     @target_directory = target_directory
-    @file_path = @target_directory.join(@file_basename)
+    @file_path = @target_directory.join(@basename)
     @file_stat = File.lstat(@file_path)
   end
 
   def hidden?
-    @file_basename.start_with?('.') || target_directory? || parent_directory?
+    @basename.start_with?('.') || target_directory? || parent_directory?
   end
 
   def <=>(other)
@@ -74,7 +74,7 @@ class LsFile
     elsif parent_directory?
       '..'
     else
-      @file_basename
+      @basename
     end
   end
 
