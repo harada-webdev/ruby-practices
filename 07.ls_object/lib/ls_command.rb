@@ -41,14 +41,14 @@ class LsCommand
 
   def show_files_in_long_format(ls_files)
     puts "total #{ls_files.sum(&:block_size)}"
-    max_length = find_max_lengths_by_props(ls_files)
+    max_lengths = find_max_lengths_by_props(ls_files)
     ls_files.each do |ls_file|
       ls_file_properties = []
       ls_file_properties << ls_file.mode
-      ls_file_properties << ls_file.hard_links.to_s.rjust(max_length[:hard_links])
-      ls_file_properties << ls_file.owner_name.to_s.ljust(max_length[:owner_name])
-      ls_file_properties << ls_file.owner_group_name.to_s.ljust(max_length[:owner_group_name])
-      ls_file_properties << ls_file.size_or_device_info.to_s.rjust(max_length[:size])
+      ls_file_properties << ls_file.hard_links.to_s.rjust(max_lengths[:hard_links])
+      ls_file_properties << ls_file.owner_name.to_s.ljust(max_lengths[:owner_name])
+      ls_file_properties << ls_file.owner_group_name.to_s.ljust(max_lengths[:owner_group_name])
+      ls_file_properties << ls_file.size_or_device_info.to_s.rjust(max_lengths[:size])
       ls_file_properties << format_last_modified_time(ls_file)
       ls_file_properties << format_name(ls_file)
       puts ls_file_properties.join(' ')
