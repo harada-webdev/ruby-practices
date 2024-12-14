@@ -3,8 +3,6 @@
 require 'etc'
 
 class LsFile
-  attr_reader :path
-
   include Comparable
 
   TYPES = {
