@@ -65,20 +65,12 @@ class LsCommand
   end
 
   def format_last_modified_time(ls_file)
-    format = if ls_file.current_year?
-               '%b %e %H:%M'
-             else
-               '%b %e  %Y'
-             end
+    format = ls_file.current_year? ? '%b %e %H:%M' : '%b %e  %Y'
     ls_file.last_modified_time.strftime(format)
   end
 
   def format_name(ls_file)
-    if ls_file.symlink?
-      "#{ls_file.name} -> #{ls_file.referenced_file}"
-    else
-      ls_file.name
-    end
+    ls_file.symlink? ? "#{ls_file.name} -> #{ls_file.referenced_file}" : ls_file.name
   end
 
   def show_files_in_default_format(ls_files)
