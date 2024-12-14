@@ -89,8 +89,7 @@ class LsCommand
   def find_max_lengths_by_column(nested_ls_files)
     nested_ls_files.each_with_object(Array.new(COLS, 0)) do |row_ls_files, max_lengths|
       row_ls_files.compact.each_with_index do |ls_file, index|
-        ls_file_name_length = ls_file.name.length
-        max_lengths[index] = [max_lengths[index], ls_file_name_length].max
+        max_lengths[index] = [max_lengths[index], ls_file.name.length].max
       end
     end
   end
