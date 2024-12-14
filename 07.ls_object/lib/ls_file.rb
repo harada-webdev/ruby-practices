@@ -64,6 +64,10 @@ class LsFile
     end
   end
 
+  def current_year?
+    Time.now.year == last_modified_time.year
+  end
+
   def last_modified_time
     @file_stat.mtime
   end

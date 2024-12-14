@@ -65,12 +65,12 @@ class LsCommand
   end
 
   def format_last_modified_time(ls_file)
-    ls_file_last_modified_time = ls_file.last_modified_time
-    if Time.now.year == ls_file_last_modified_time.year
-      ls_file_last_modified_time.strftime('%b %e %H:%M')
-    else
-      ls_file_last_modified_time.strftime('%b %e  %Y')
-    end
+    format = if ls_file.current_year?
+               '%b %e %H:%M'
+             else
+               '%b %e  %Y'
+             end
+    ls_file.last_modified_time.strftime(format)
   end
 
   def format_name(ls_file)
