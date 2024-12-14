@@ -7,7 +7,7 @@ require_relative 'ls_file'
 class LsCommand
   COLS = 3
 
-  def show_ls_files
+  def show_files
     options = parse_options
     ls_files = build_ls_files(options)
     if options[:long]
