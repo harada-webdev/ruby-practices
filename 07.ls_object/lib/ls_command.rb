@@ -48,7 +48,7 @@ class LsCommand
       cols << ls_file.hard_links.to_s.rjust(max_lengths[:hard_links])
       cols << ls_file.owner_name.to_s.ljust(max_lengths[:owner_name])
       cols << ls_file.owner_group_name.to_s.ljust(max_lengths[:owner_group_name])
-      cols << ls_file.size_or_device_info.to_s.rjust(max_lengths[:size])
+      cols << format_device_info_or_size(ls_file).to_s.rjust(max_lengths[:device_info_or_size])
       cols << format_last_modified_time(ls_file)
       cols << format_name(ls_file)
       puts cols.join(' ')
@@ -60,8 +60,12 @@ class LsCommand
       hard_links: ls_files.map { |ls_file| ls_file.hard_links.to_s.length }.max,
       owner_name: ls_files.map { |ls_file| ls_file.owner_name.to_s.length }.max,
       owner_group_name: ls_files.map { |ls_file| ls_file.owner_group_name.to_s.length }.max,
-      size: ls_files.map { |ls_file| ls_file.size_or_device_info.to_s.length }.max
+      device_info_or_size: ls_files.map { |ls_file| format_device_info_or_size(ls_file).to_s.length }.max
     }
+  end
+
+  def format_device_info_or_size(ls_file)
+    ls_file.device_file? ? "#{ls_file.rdev_major}, #{ls_file.rdev_minor}" : ls_file.size
   end
 
   def format_last_modified_time(ls_file)

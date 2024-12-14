@@ -52,12 +52,20 @@ class LsFile
     Etc.getgrgid(@file_stat.gid).name
   end
 
-  def size_or_device_info
-    if @file_stat.rdev.zero?
-      @file_stat.size
-    else
-      "#{@file_stat.rdev_major}, #{@file_stat.rdev_minor}"
-    end
+  def device_file?
+    @file_stat.rdev.nonzero?
+  end
+
+  def rdev_major
+    @file_stat.rdev_major
+  end
+
+  def rdev_minor
+    @file_stat.rdev_minor
+  end
+
+  def size
+    @file_stat.size
   end
 
   def current_year?
