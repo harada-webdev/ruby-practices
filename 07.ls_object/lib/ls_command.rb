@@ -74,12 +74,10 @@ class LsCommand
   end
 
   def format_name(ls_file)
-    ls_file_path = ls_file.path
-    ls_file_name = ls_file.name
-    if File.symlink?(ls_file_path)
-      "#{ls_file_name} -> #{File.readlink(ls_file_path)}"
+    if ls_file.symlink?
+      "#{ls_file.name} -> #{ls_file.referenced_file}"
     else
-      ls_file_name
+      ls_file.name
     end
   end
 

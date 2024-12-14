@@ -72,6 +72,10 @@ class LsFile
     @file_stat.mtime
   end
 
+  def symlink?
+    File.symlink?(@path)
+  end
+
   def name
     if target_directory?
       '.'
@@ -80,6 +84,10 @@ class LsFile
     else
       @basename
     end
+  end
+
+  def referenced_file
+    File.readlink(@path)
   end
 
   private
